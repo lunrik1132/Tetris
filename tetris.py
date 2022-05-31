@@ -1,3 +1,4 @@
+from re import I
 from pygame import *
 import time as tm
 from random import *
@@ -15,6 +16,7 @@ class GameSprite(sprite.Sprite):
         self.alive = True
         self.downtiming = tm.time()
         self.movetiming = tm.time()
+        self.time_rect_y = None
 
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
@@ -43,6 +45,7 @@ class Player(GameSprite):
 
         if tm.time() - self.downtiming > game_speed and self.alive == True and fast_down == False:
             self.downtiming = tm.time()
+            self.time_rect_y = self.rect.y
             self.rect.y += self.speed_y
 
     def count(self):
@@ -62,67 +65,59 @@ class Player(GameSprite):
                     clear_list.remove(c)
 
     def dead(self):
-        global alive_blocks, block1, block2, block3, block4
-        if self.rect.y >= height_limit:
-            for b in alive_blocks:
-                blocks.add(b)
-                b.alive = False
-            alive_blocks.clear()
+        if self.rect.y == height_limit:
+            self.alive = False
 
-            set_block()
-            alive_blocks = [block1, block2, block3, block4]
+        for b in blocks:
+            if b.alive == False:
+                self.alive = False
+
+    
+        
+        
 
         
-        for b in blocks:
-            if self.rect.y == b.rect.y - 25 and self.rect.x == b.rect.x:
-                for b in alive_blocks:
-                    blocks.add(b)
-                    b.alive = False
-                alive_blocks.clear()
-
-                set_block()
-                alive_blocks = [block1, block2, block3, block4]
 
 def set_block():
-    global block1, block2, block3, block4
-    if tm.time() - setform_time > 0.1:
-        block_color = choice(colors)
-        block_form = 1
-        if block_form == 1: #лінія
-            block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 100, 100, 25, 25, 25, 25, movekeys)
-        if block_form == 2: #квадрат
-            block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
-        if block_form == 3: #зигзаг1
-            block1 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
-        if block_form == 4: #зигзаг2
-            block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
-        if block_form == 5: #трикутник
-            block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
-        if block_form == 6: #кут 90 градусів1
-            block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
-        if block_form == 7: #кут 90 градусів2
-            block1 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
-            block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
-            block3 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
-            block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+    global block1, block2, block3, block4, alive_blocks
+    block_color = choice(colors)
+    block_form = choice(forms)
+    if block_form == 1: #лінія
+        block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 100, 100, 25, 25, 25, 25, movekeys)
+    elif block_form == 2: #квадрат
+        block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
+    elif block_form == 3: #зигзаг1
+        block1 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+    elif block_form == 4: #зигзаг2
+        block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
+    elif block_form == 5: #трикутник
+        block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+    elif block_form == 6: #кут 90 градусів1
+        block1 = Player(block_color, 100, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 100, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
+    elif block_form == 7: #кут 90 градусів2
+        block1 = Player(block_color, 125, 25, 25, 25, 25, 25, movekeys)
+        block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
+        block3 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
+        block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+    blocks.add(block1, block2, block3, block4)
 
 img_redblock = 'redblock.png'
 img_blueblock = 'blueblock.png'
@@ -144,8 +139,7 @@ fps = 60
 game_speed = 0.3
 fast_down = False
 
-set_block()
-alive_blocks = [block1, block2, block3, block4]
+alive_blocks = []
 blocks = sprite.Group()
 
 clear_list = []
@@ -162,8 +156,16 @@ while run:
         dt = clock.tick(fps)
         
         draw.rect(window, (200,255,255), Rect(0, 0, win_width, win_height))
-        
-        for b in alive_blocks:
+
+        for b in blocks:
+            if b.alive = True and len(alive_blocks) >=:
+                alive_blocks.append(b)
+
+            if alive_blocks == 0:
+                set_block()
+
+
+        for b in blocks:
             b.move()
             b.count()
             b.clear()
