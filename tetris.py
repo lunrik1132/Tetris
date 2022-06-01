@@ -65,18 +65,15 @@ class Player(GameSprite):
                     clear_list.remove(c)
 
     def dead(self):
+        global alive_count
+        alive_count = 0
+
         if self.rect.y == height_limit:
             self.alive = False
 
         for b in blocks:
             if b.alive == False:
                 self.alive = False
-
-    
-        
-        
-
-        
 
 def set_block():
     global block1, block2, block3, block4, alive_blocks
@@ -117,6 +114,7 @@ def set_block():
         block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
         block3 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
         block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
+    alive_blocks = [block1, block2, block3, block4]
     blocks.add(block1, block2, block3, block4)
 
 img_redblock = 'redblock.png'
@@ -127,6 +125,7 @@ setform_time = tm.time()
 
 forms = [1,2,3,4,5,6,7]
 colors = [img_redblock, img_blueblock, img_greenblock]
+timee = tm.time()
 
 height_limit = 475
 win_width = 250
@@ -139,7 +138,7 @@ fps = 60
 game_speed = 0.3
 fast_down = False
 
-alive_blocks = []
+isAlive_blocks = []
 blocks = sprite.Group()
 
 clear_list = []
@@ -157,13 +156,10 @@ while run:
         
         draw.rect(window, (200,255,255), Rect(0, 0, win_width, win_height))
 
-        for b in blocks:
-            if b.alive = True and len(alive_blocks) >=:
-                alive_blocks.append(b)
-
-            if alive_blocks == 0:
-                set_block()
-
+        
+        
+        if all(isAlive_blocks) == False or len(blocks) == 0:
+            set_block()
 
         for b in blocks:
             b.move()
