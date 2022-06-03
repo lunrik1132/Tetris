@@ -1,4 +1,4 @@
-from re import I
+from turtle import clear
 from pygame import *
 import time as tm
 from random import *
@@ -51,32 +51,82 @@ class Player(GameSprite):
     def count(self):
         for b in blocks:
             if b.rect.y == 475:
-                if not b in clear_list:
-                    clear_list.append(b)
+                if not b in clear_list1:
+                    clear_list1.append(b)
+            if b.rect.y == 450:
+                if not b in clear_list2:
+                    clear_list2.append(b)
+            if b.rect.y == 425:
+                if not b in clear_list3:
+                    clear_list3.append(b)
+            if b.rect.y == 400:
+                if not b in clear_list4:
+                    clear_list4.append(b)
+            if b.rect.y == 375:
+                if not b in clear_list5:
+                    clear_list5.append(b)
+            if b.rect.y == 350:
+                if not b in clear_list6:
+                    clear_list6.append(b)
+            if b.rect.y == 325:
+                if not b in clear_list7:
+                    clear_list7.append(b)
+            if b.rect.y == 300:
+                if not b in clear_list8:
+                    clear_list8.append(b)
+            if b.rect.y == 275:
+                if not b in clear_list9:
+                    clear_list9.append(b)
+            if b.rect.y == 250:
+                if not b in clear_list10:
+                    clear_list10.append(b)
+            if b.rect.y == 225:
+                if not b in clear_list11:
+                    clear_list12.append(b)
+            if b.rect.y == 200:
+                if not b in clear_list12:
+                    clear_list12.append(b)
+            if b.rect.y == 175:
+                if not b in clear_list13:
+                    clear_list13.append(b)
+            if b.rect.y == 150:
+                if not b in clear_list14:
+                    clear_list14.append(b)
+                
     
     def clear(self):
-        if len(clear_list) == 10:
-            for c in clear_list:
+        global timee
+        if len(clear_list1) == 10:
+            for c in clear_list1:
                 c.kill()
-                cleared_list.append(c)
-        if len(cleared_list) == 10:
-            for c in cleared_list:
-                if c in clear_list:
-                    clear_list.remove(c)
+                cleared_list1.append(c)
+                
+                if tm.time() - timee > 0.5:
+                    timee = tm.time()
+                    for b in blocks:
+                        b.rect.y += 25
 
+        if len(cleared_list1) == 10:
+            for c in cleared_list1:
+                if c in clear_list1:
+                    clear_list1.remove(c)
+        
     def dead(self):
-        global alive_count
-        alive_count = 0
-
         if self.rect.y == height_limit:
             self.alive = False
 
-        for b in blocks:
-            if b.alive == False:
+        for a in alive_blocks:
+            if a.alive == False:
                 self.alive = False
+                alive_blocks.empty()
+
+        for b in blocks:
+            if self.rect.y == b.rect.y - 25 and self.rect.x == b.rect.x and not b in alive_blocks:
+                self.alive = False
+       
 
 def set_block():
-    global block1, block2, block3, block4, alive_blocks
+    global block1, block2, block3, block4, alive_blocks, block_form
     block_color = choice(colors)
     block_form = choice(forms)
     if block_form == 1: #лінія
@@ -114,18 +164,17 @@ def set_block():
         block2 = Player(block_color, 125, 50, 25, 25, 25, 25, movekeys)
         block3 = Player(block_color, 125, 75, 25, 25, 25, 25, movekeys)
         block4 = Player(block_color, 100, 75, 25, 25, 25, 25, movekeys)
-    alive_blocks = [block1, block2, block3, block4]
+    alive_blocks.add(block1, block2, block3, block4)
     blocks.add(block1, block2, block3, block4)
 
 img_redblock = 'redblock.png'
 img_blueblock = 'blueblock.png'
 img_greenblock = 'greenblock.png'
-movekeys = [K_a, K_d, K_s]
-setform_time = tm.time()
+movekeys = [K_a, K_d, K_s] 
 
+timee = tm.time()
 forms = [1,2,3,4,5,6,7]
 colors = [img_redblock, img_blueblock, img_greenblock]
-timee = tm.time()
 
 height_limit = 475
 win_width = 250
@@ -138,11 +187,26 @@ fps = 60
 game_speed = 0.3
 fast_down = False
 
-isAlive_blocks = []
+alive_blocks = sprite.Group()
 blocks = sprite.Group()
 
-clear_list = []
-cleared_list = []
+clear_list1 = []
+clear_list2 = []
+clear_list3 = []
+clear_list4 = []
+clear_list5 = []
+clear_list6 = []
+clear_list7 = []
+clear_list8 = []
+clear_list9 = []
+clear_list10 = []
+clear_list11 = []
+clear_list12 = []
+clear_list13 = []
+clear_list14 = []
+
+cleared_list1 = []
+clear_list = [clear_list1, clear_list2, clear_list3, clear_list4, clear_list5, clear_list6, clear_list7, clear_list8, clear_list9, clear_list10, clear_list11, clear_list12, clear_list13, clear_list14]
 
 finish = False
 run = True
@@ -156,12 +220,14 @@ while run:
         
         draw.rect(window, (200,255,255), Rect(0, 0, win_width, win_height))
 
-        
-        
-        if all(isAlive_blocks) == False or len(blocks) == 0:
+        if len(blocks) == 0:
             set_block()
 
-        for b in blocks:
+        if len(alive_blocks) == 0:
+            set_block()
+
+
+        for b in alive_blocks:
             b.move()
             b.count()
             b.clear()
