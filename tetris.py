@@ -48,69 +48,6 @@ class Player(GameSprite):
             self.time_rect_y = self.rect.y
             self.rect.y += self.speed_y
 
-    def count(self):
-        for b in blocks:
-            if b.rect.y == 475:
-                if not b in clear_list1:
-                    clear_list1.append(b)
-            if b.rect.y == 450:
-                if not b in clear_list2:
-                    clear_list2.append(b)
-            if b.rect.y == 425:
-                if not b in clear_list3:
-                    clear_list3.append(b)
-            if b.rect.y == 400:
-                if not b in clear_list4:
-                    clear_list4.append(b)
-            if b.rect.y == 375:
-                if not b in clear_list5:
-                    clear_list5.append(b)
-            if b.rect.y == 350:
-                if not b in clear_list6:
-                    clear_list6.append(b)
-            if b.rect.y == 325:
-                if not b in clear_list7:
-                    clear_list7.append(b)
-            if b.rect.y == 300:
-                if not b in clear_list8:
-                    clear_list8.append(b)
-            if b.rect.y == 275:
-                if not b in clear_list9:
-                    clear_list9.append(b)
-            if b.rect.y == 250:
-                if not b in clear_list10:
-                    clear_list10.append(b)
-            if b.rect.y == 225:
-                if not b in clear_list11:
-                    clear_list12.append(b)
-            if b.rect.y == 200:
-                if not b in clear_list12:
-                    clear_list12.append(b)
-            if b.rect.y == 175:
-                if not b in clear_list13:
-                    clear_list13.append(b)
-            if b.rect.y == 150:
-                if not b in clear_list14:
-                    clear_list14.append(b)
-                
-    
-    def clear(self):
-        global timee
-        if len(clear_list1) == 10:
-            for c in clear_list1:
-                c.kill()
-                cleared_list1.append(c)
-                
-                if tm.time() - timee > 0.5:
-                    timee = tm.time()
-                    for b in blocks:
-                        b.rect.y += 25
-
-        if len(cleared_list1) == 10:
-            for c in cleared_list1:
-                if c in clear_list1:
-                    clear_list1.remove(c)
-        
     def dead(self):
         if self.rect.y == height_limit:
             self.alive = False
@@ -123,7 +60,36 @@ class Player(GameSprite):
         for b in blocks:
             if self.rect.y == b.rect.y - 25 and self.rect.x == b.rect.x and not b in alive_blocks:
                 self.alive = False
-       
+
+def clear():
+    global count, timee, i
+    for b in blocks:
+        if b.rect.y == count: #475
+            if not b in clear_list:
+                clear_list.append(b)
+                if len(clear_list) == 10:
+                    for c in clear_list:
+                        c.kill()
+                        cleared_list.append(c)
+                        
+
+                        if tm.time() - timee > 0.5:
+                            timee = tm.time()
+                            for b in blocks:
+                                if b.rect.y <= count:
+                                    b.rect.y += 25
+
+                if len(cleared_list) == 10:
+                    for c in cleared_list:
+                        if c in clear_list:
+                            clear_list.remove(c)
+
+    clear_list.clear()                        
+    count = count - 25
+    if count == 200:
+        count = 475
+    
+
 
 def set_block():
     global block1, block2, block3, block4, alive_blocks, block_form
@@ -190,23 +156,9 @@ fast_down = False
 alive_blocks = sprite.Group()
 blocks = sprite.Group()
 
-clear_list1 = []
-clear_list2 = []
-clear_list3 = []
-clear_list4 = []
-clear_list5 = []
-clear_list6 = []
-clear_list7 = []
-clear_list8 = []
-clear_list9 = []
-clear_list10 = []
-clear_list11 = []
-clear_list12 = []
-clear_list13 = []
-clear_list14 = []
-
-cleared_list1 = []
-clear_list = [clear_list1, clear_list2, clear_list3, clear_list4, clear_list5, clear_list6, clear_list7, clear_list8, clear_list9, clear_list10, clear_list11, clear_list12, clear_list13, clear_list14]
+count = 475
+clear_list = []
+cleared_list = []
 
 finish = False
 run = True
@@ -226,11 +178,10 @@ while run:
         if len(alive_blocks) == 0:
             set_block()
 
+        clear()
 
         for b in alive_blocks:
             b.move()
-            b.count()
-            b.clear()
             b.dead()
             b.reset()
 
