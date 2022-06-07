@@ -1,4 +1,3 @@
-from turtle import clear
 from pygame import *
 import time as tm
 from random import *
